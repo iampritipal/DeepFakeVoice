@@ -1,4 +1,4 @@
-import { Shield, Wifi } from "lucide-react";
+import { Radio, Wifi } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function Navbar() {
@@ -9,7 +9,7 @@ export function Navbar() {
           animate={{ rotate: [0, 5, -5, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         >
-          <Shield className="w-8 h-8 text-primary" />
+          <Radio className="w-8 h-8 text-primary" />
         </motion.div>
         <div>
           <h1 className="text-lg font-bold font-mono tracking-tight text-foreground">

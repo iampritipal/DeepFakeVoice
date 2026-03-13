@@ -1,73 +1,84 @@
-# Welcome to your Lovable project
+# Voice Sentinel - AI Audio Deepfake Detector
 
-## Project info
+An advanced audio deepfake detection system that analyzes voice recordings to identify AI-generated or manipulated speech.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Features
 
-## How can I edit this code?
+- **Real-time Audio Analysis**: Upload audio files or record live voice samples
+- **AI Detection Engine**: Advanced algorithms to detect synthetic speech patterns
+- **Visual Analytics**: Spectrograms, waveforms, and feature analysis
+- **Risk Assessment**: Comprehensive risk scoring and confidence metrics
+- **Detailed Reports**: Export analysis reports with technical details
 
-There are several ways of editing your application.
+## Technologies Used
 
-**Use Lovable**
+- **Frontend**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **UI Framework**: Tailwind CSS + shadcn/ui
+- **Animations**: Framer Motion
+- **Audio Processing**: Web Audio API
+- **Charts**: Recharts
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (v16 or higher)
+- npm or yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+### Installation
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Clone the repository
+git clone <repository-url>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Navigate to project directory
+cd voice-sentinel
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Build for Production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+npm run build
+```
 
-**Use GitHub Codespaces**
+## How It Works
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+The system analyzes multiple audio features to detect AI-generated voices:
 
-## What technologies are used for this project?
+1. **Spectral Analysis**: Examines frequency distributions and patterns
+2. **Pitch Detection**: Analyzes pitch consistency and variation
+3. **Harmonic Analysis**: Evaluates harmonic-to-noise ratios
+4. **Temporal Features**: Studies zero-crossing rates and speech artifacts
+5. **Pattern Recognition**: Identifies unnatural formant transitions
 
-This project is built with:
+## Detection Indicators
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Pitch Consistency (High Severity)
+- Harmonic Pattern (Medium Severity)
+- Speech Artifacts (High Severity)
+- Frequency Spikes (Medium Severity)
+- Breath Pattern (Low Severity)
+- Formant Transition (Medium Severity)
 
-## How can I deploy this project?
+## Supported Audio Formats
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+- WAV
+- MP3
+- OGG
+- FLAC
+- WebM
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
+MIT License
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Author
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Developed with passion for audio security and AI detection.
