@@ -1,0 +1,82 @@
+/*
+ * ============================================================
+ * ATLAS / THEME COLORS
+ * ============================================================
+ * Usage: Import this as the very first stylesheet in your project.
+ * All UI components should reference these variables exclusively.
+ * Never hardcode color values — always use var(--token-name).
+ *
+ * Dynamic theme switching: GSAP tweens --bg, --accent, --border,
+ * --panel per section (see interactions.js → applyTheme()).
+ * ============================================================
+ */
+
+:root {
+  /* ── Base Surface ── */
+  --bg:     #030303;   /* Page/canvas background */
+  --fg:     #fafafa;   /* Primary text / foreground */
+  --muted:  #a3a3a3;   /* Secondary text, labels, placeholders */
+  --border: #1e1e1e;   /* Borders, dividers, hairlines */
+  --panel:  rgba(20, 20, 20, 0.4); /* Glassmorphism panel fill */
+
+  /* ── Brand Accent ── */
+  --accent: #3b82f6;   /* Electric blue — CTA, highlights, glow */
+
+  /* ── Semantic Aliases ── */
+  --color-surface:      var(--bg);
+  --color-on-surface:   var(--fg);
+  --color-subdued:      var(--muted);
+  --color-line:         var(--border);
+  --color-glass:        var(--panel);
+  --color-brand:        var(--accent);
+}
+
+/*
+ * ── Per-Section Theme Overrides ──────────────────────────────
+ * These are the exact values GSAP tweens between as the user
+ * scrolls through each section. Reference interactions.js THEMES[].
+ *
+ * Section 1  #pinned-stage  bg:#030303  accent:#3b82f6  border:#1e1e1e
+ * Section 2  #manifesto     bg:#050508  accent:#0ea5e9  border:#1a1c23
+ * Section 3  #overview      bg:#02040a  accent:#3b82f6  border:#161b22
+ * Section 4  #interface     bg:#000000  accent:#2563eb  border:#171717
+ * Section 5  #modules       bg:#05030a  accent:#3b82f6  border:#201633
+ * Section 6  #pricing       bg:#020202  accent:#3b82f6  border:#111111
+ * Section 7  #access        bg:#000000  accent:#3b82f6  border:#1a1a1a
+ *
+ * To add a new theme zone: append to THEMES[] in interactions.js
+ * and add a matching ScrollTrigger in initThemesAndNav().
+ * ────────────────────────────────────────────────────────────
+ */
+
+/*
+ * ── Selection Highlight ─────────────────────────────────────
+ * Applied via Tailwind utility on <html>:
+ *   selection:bg-[var(--accent)]/30  selection:text-[var(--fg)]
+ */
+::selection {
+  background-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--fg);
+}
+
+/*
+ * ── Smooth Theme Transitions ─────────────────────────────────
+ * The body transitions bg/color on theme change (0.8s ease).
+ * Individual elements that rely on CSS vars auto-animate.
+ */
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  transition: background-color 0.8s ease, color 0.8s ease;
+}
+
+/*
+ * ── Accent Glow Utility ──────────────────────────────────────
+ * Use .glow-accent on any element to emit the brand glow.
+ */
+.glow-accent {
+  box-shadow: 0 0 15px var(--accent);
+}
+.glow-accent-soft {
+  box-shadow: 0 0 8px var(--accent);
+}

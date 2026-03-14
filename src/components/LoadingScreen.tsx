@@ -1,88 +1,87 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Terminal, Lock, Shield, Zap, CheckCircle2 } from "lucide-react";
 
 interface LoadingScreenProps {
   onComplete: () => void;
 }
 
+const STEPS = [
+  { text: "Initializing neural network...",    icon: Terminal,    duration: 800 },
+  { text: "Loading AI detection models...",    icon: Shield,      duration: 1000 },
+  { text: "Calibrating audio processors...",  icon: Zap,         duration: 900 },
+  { text: "Establishing secure connection...", icon: Lock,        duration: 700 },
+  { text: "System ready. Access granted.",     icon: CheckCircle2, duration: 600 },
+];
+
+const RAW_LOGS = [
+  "> Connecting to secure server...",
+  "> Authenticating credentials...",
+  "> [OK] Connection established",
+  "> Loading deepfake detection algorithms...",
+  "> Initializing spectral analysis engine...",
+  "> [OK] Audio processor online",
+  "> Configuring neural network layers...",
+  "> [OK] AI model loaded successfully",
+  "> Running system diagnostics...",
+  "> [OK] All systems operational",
+  "> Preparing user interface...",
+  "> [OK] Ready for deployment",
+];
+
+/** Sanitize log lines — strip newlines and control characters to prevent log injection */
+const sanitizeLog = (s: string) => s.replace(/[\r\n\t\x00-\x1F\x7F]/g, " ").slice(0, 120);
+const LOGS = RAW_LOGS.map(sanitizeLog);
+
 export function LoadingScreen({ onComplete }: LoadingScreenProps) {
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress]       = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
-  const [logs, setLogs] = useState<string[]>([]);
-  const [isComplete, setIsComplete] = useState(false);
-
-  const steps = [
-    { text: "Initializing neural network...", icon: Terminal, duration: 800 },
-    { text: "Loading AI detection models...", icon: Shield, duration: 1000 },
-    { text: "Calibrating audio processors...", icon: Zap, duration: 900 },
-    { text: "Establishing secure connection...", icon: Lock, duration: 700 },
-    { text: "System ready. Access granted.", icon: CheckCircle2, duration: 600 },
-  ];
-
-  const hackingLogs = [
-    "> Connecting to secure server...",
-    "> Authenticating credentials...",
-    "> [OK] Connection established",
-    "> Loading deepfake detection algorithms...",
-    "> Initializing spectral analysis engine...",
-    "> [OK] Audio processor online",
-    "> Configuring neural network layers...",
-    "> [OK] AI model loaded successfully",
-    "> Running system diagnostics...",
-    "> [OK] All systems operational",
-    "> Preparing user interface...",
-    "> [OK] Ready for deployment",
-  ];
+  const [visibleLogs, setVisibleLogs] = useState<string[]>([]);
+  const [isComplete, setIsComplete]   = useState(false);
+  const logRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Progress bar animation
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + 1;
+    /* Progress bar */
+    const progressTimer = setInterval(() => {
+      setProgress(p => {
+        if (p >= 100) { clearInterval(progressTimer); return 100; }
+        return p + 1;
       });
     }, 40);
 
-    // Hacking logs animation
-    let logIndex = 0;
-    const logInterval = setInterval(() => {
-      if (logIndex < hackingLogs.length) {
-        setLogs((prev) => [...prev, hackingLogs[logIndex]]);
-        logIndex++;
+    /* Log stream */
+    let logIdx = 0;
+    const logTimer = setInterval(() => {
+      if (logIdx < LOGS.length) {
+        setVisibleLogs(prev => [...prev, LOGS[logIdx++]]);
       }
     }, 350);
 
-    // Steps animation
-    let stepIndex = 0;
-    let stepTimeout: NodeJS.Timeout;
-    
+    /* Steps */
+    let stepIdx = 0;
+    let stepTimeout: ReturnType<typeof setTimeout>;
     const nextStep = () => {
-      if (stepIndex < steps.length) {
-        setCurrentStep(stepIndex);
-        stepTimeout = setTimeout(() => {
-          stepIndex++;
-          nextStep();
-        }, steps[stepIndex].duration);
+      if (stepIdx < STEPS.length) {
+        setCurrentStep(stepIdx);
+        stepTimeout = setTimeout(() => { stepIdx++; nextStep(); }, STEPS[stepIdx].duration);
       } else {
         setIsComplete(true);
-        setTimeout(() => {
-          onComplete();
-        }, 800);
+        setTimeout(onComplete, 800);
       }
     };
-    
     nextStep();
 
     return () => {
-      clearInterval(progressInterval);
-      clearInterval(logInterval);
+      clearInterval(progressTimer);
+      clearInterval(logTimer);
       clearTimeout(stepTimeout);
     };
   }, []);
+
+  /* Auto-scroll log pane */
+  useEffect(() => {
+    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
+  }, [visibleLogs]);
 
   return (
     <AnimatePresence>
@@ -90,200 +89,199 @@ export function LoadingScreen({ onComplete }: LoadingScreenProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-background cyber-grid flex items-center justify-center"
+        className="fixed inset-0 z-50 flex items-center justify-center cyber-grid"
+        style={{ background: "var(--bg)" }}
       >
-        {/* Scanline effect */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
+        {/* Scanline overlay */}
+        <div
+          className="pointer-events-none absolute inset-0"
           style={{
-            background: "linear-gradient(transparent 50%, rgba(59, 130, 246, 0.03) 50%)",
-            backgroundSize: "100% 4px",
+            background: "repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(59,130,246,0.015) 3px, rgba(59,130,246,0.015) 4px)",
           }}
-          animate={{ backgroundPositionY: ["0px", "4px"] }}
-          transition={{ duration: 0.1, repeat: Infinity, ease: "linear" }}
         />
 
-        {/* Glitch effect overlay */}
+        {/* Glitch flash */}
         <motion.div
-          className="absolute inset-0 pointer-events-none bg-primary/5"
-          animate={{ opacity: [0, 0.1, 0] }}
-          transition={{ duration: 0.2, repeat: Infinity, repeatDelay: 3 }}
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "color-mix(in srgb, var(--accent) 4%, transparent)" }}
+          animate={{ opacity: [0, 1, 0] }}
+          transition={{ duration: 0.15, repeat: Infinity, repeatDelay: 4 }}
         />
 
-        <div className="relative z-10 max-w-4xl w-full mx-4">
-          {/* Main terminal window */}
+        <div className="relative z-10 w-full max-w-2xl mx-4">
           <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-card/90 backdrop-blur-xl border-2 border-primary/30 rounded-lg overflow-hidden shadow-2xl"
+            initial={{ scale: 0.94, opacity: 0, y: 16 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="overflow-hidden"
+            style={{
+              background: "var(--panel)",
+              border: "1px solid color-mix(in srgb, var(--accent) 25%, transparent)",
+              backdropFilter: "blur(20px)",
+            }}
           >
-            {/* Terminal header */}
-            <div className="bg-primary/10 border-b border-primary/30 px-4 py-3 flex items-center gap-2">
-              <div className="flex gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-500" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                <div className="w-3 h-3 rounded-full bg-green-500" />
+            {/* Terminal title bar */}
+            <div
+              className="flex items-center gap-3 px-4 py-3 border-b"
+              style={{
+                borderColor: "color-mix(in srgb, var(--accent) 20%, transparent)",
+                background: "color-mix(in srgb, var(--accent) 6%, transparent)",
+              }}
+            >
+              <div className="flex gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                <div className="w-3 h-3 rounded-full bg-green-500/80" />
               </div>
-              <div className="flex-1 text-center">
-                <span className="text-xs font-mono text-primary uppercase tracking-wider">
-                  Voice Sentinel Terminal v1.0
-                </span>
-              </div>
+              <span className="sys-label mx-auto" style={{ color: "var(--accent)" }}>
+                voice-sentinel — terminal v1.0
+              </span>
             </div>
 
-            {/* Terminal content */}
             <div className="p-6 space-y-6">
-              {/* Logo and title */}
-              <div className="flex items-center gap-4 mb-6">
+              {/* Header */}
+              <div className="flex items-center gap-4">
                 <motion.div
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+                  style={{ color: "var(--accent)" }}
                 >
-                  <Terminal className="w-12 h-12 text-primary" />
+                  <Terminal className="w-10 h-10" />
                 </motion.div>
                 <div>
-                  <h2 className="text-2xl font-bold font-mono text-primary">
-                    INITIALIZING SYSTEM
+                  <h2 className="font-display text-base font-semibold uppercase tracking-widest mb-0.5" style={{ color: "var(--accent)" }}>
+                    Initializing System
                   </h2>
-                  <p className="text-sm text-muted-foreground font-mono">
-                    Please wait while we prepare the environment...
-                  </p>
+                  <p className="body-copy--sm">Please wait while we prepare the environment…</p>
                 </div>
               </div>
 
               {/* Progress bar */}
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs font-mono text-muted-foreground">
-                  <span>Loading...</span>
-                  <span>{progress}%</span>
+              <div className="space-y-1.5">
+                <div className="flex justify-between">
+                  <span className="sys-label">Loading</span>
+                  <span className="sys-label" style={{ color: "var(--accent)" }}>{progress}%</span>
                 </div>
-                <div className="h-2 bg-secondary rounded-full overflow-hidden">
+                <div className="h-1 w-full overflow-hidden" style={{ background: "var(--border)" }}>
                   <motion.div
-                    className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"
-                    initial={{ width: 0 }}
+                    className="h-full"
+                    style={{ background: "var(--accent)" }}
                     animate={{ width: `${progress}%` }}
                     transition={{ duration: 0.1 }}
                   />
                 </div>
               </div>
 
-              {/* Loading steps */}
-              <div className="space-y-3">
-                {steps.map((step, index) => {
-                  const StepIcon = step.icon;
-                  const isActive = index === currentStep;
-                  const isCompleted = index < currentStep;
-
+              {/* Steps */}
+              <div className="space-y-2.5">
+                {STEPS.map((step, idx) => {
+                  const Icon = step.icon;
+                  const active    = idx === currentStep;
+                  const completed = idx < currentStep;
                   return (
                     <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{
-                        opacity: isActive || isCompleted ? 1 : 0.3,
-                        x: 0,
-                      }}
+                      key={idx}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: active || completed ? 1 : 0.3, x: 0 }}
+                      transition={{ duration: 0.3 }}
                       className="flex items-center gap-3"
                     >
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          isCompleted
-                            ? "bg-green-500/20 text-green-500"
-                            : isActive
-                            ? "bg-primary/20 text-primary"
-                            : "bg-secondary text-muted-foreground"
-                        }`}
+                        className="w-7 h-7 flex items-center justify-center shrink-0"
+                        style={{
+                          border: `1px solid ${completed ? "rgba(34,197,94,0.4)" : active ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "var(--border)"}`,
+                          background: completed ? "rgba(34,197,94,0.1)" : active ? "color-mix(in srgb, var(--accent) 10%, transparent)" : "transparent",
+                          color: completed ? "rgb(34,197,94)" : active ? "var(--accent)" : "var(--muted)",
+                        }}
                       >
-                        {isCompleted ? (
-                          <CheckCircle2 className="w-4 h-4" />
-                        ) : (
-                          <StepIcon className="w-4 h-4" />
-                        )}
+                        {completed ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Icon className="w-3.5 h-3.5" />}
                       </div>
-                      <span
-                        className={`text-sm font-mono ${
-                          isActive || isCompleted
-                            ? "text-foreground"
-                            : "text-muted-foreground"
-                        }`}
-                      >
+                      <span className="body-copy--sm" style={{ color: active || completed ? "var(--fg)" : "var(--muted)" }}>
                         {step.text}
                       </span>
-                      {isActive && (
+                      {active && (
                         <motion.span
                           animate={{ opacity: [1, 0] }}
-                          transition={{ duration: 0.8, repeat: Infinity }}
-                          className="text-primary"
-                        >
-                          ▊
-                        </motion.span>
+                          transition={{ duration: 0.7, repeat: Infinity }}
+                          style={{ color: "var(--accent)" }}
+                          className="text-sm"
+                        >▊</motion.span>
                       )}
                     </motion.div>
                   );
                 })}
               </div>
 
-              {/* Hacking logs terminal */}
-              <div className="bg-black/50 rounded-lg p-4 h-48 overflow-hidden border border-primary/20">
-                <div className="space-y-1 font-mono text-xs">
-                  {logs.map((log, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className={`${
-                        log.includes("[OK]")
-                          ? "text-green-500"
-                          : log.startsWith(">")
-                          ? "text-blue-400"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      {log}
-                      {index === logs.length - 1 && (
-                        <motion.span
-                          animate={{ opacity: [1, 0] }}
-                          transition={{ duration: 0.5, repeat: Infinity }}
-                          className="ml-1"
-                        >
-                          _
-                        </motion.span>
-                      )}
-                    </motion.div>
-                  ))}
-                </div>
+              {/* Log pane */}
+              <div
+                ref={logRef}
+                className="h-40 overflow-y-auto p-3 space-y-0.5"
+                style={{
+                  background: "rgba(0,0,0,0.5)",
+                  border: "1px solid color-mix(in srgb, var(--accent) 15%, transparent)",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "11px",
+                  scrollbarWidth: "none",
+                }}
+              >
+                {visibleLogs.map((log, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2 }}
+                    style={{
+                      color: log.includes("[OK]") ? "rgb(34,197,94)" : log.startsWith(">") ? "rgba(59,130,246,0.9)" : "var(--muted)",
+                    }}
+                  >
+                    {log}
+                    {idx === visibleLogs.length - 1 && (
+                      <motion.span
+                        animate={{ opacity: [1, 0] }}
+                        transition={{ duration: 0.5, repeat: Infinity }}
+                        className="ml-1"
+                      >_</motion.span>
+                    )}
+                  </motion.div>
+                ))}
               </div>
 
-              {/* Access granted message */}
+              {/* Access granted */}
               <AnimatePresence>
                 {isComplete && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-center py-4"
+                    className="flex items-center justify-center gap-2 py-3"
+                    style={{
+                      border: "1px solid rgba(34,197,94,0.3)",
+                      background: "rgba(34,197,94,0.06)",
+                    }}
                   >
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ duration: 0.5 }}
-                      className="inline-flex items-center gap-2 text-green-500 font-mono text-lg font-bold"
+                      transition={{ duration: 0.4 }}
                     >
-                      <CheckCircle2 className="w-6 h-6" />
-                      ACCESS GRANTED
+                      <CheckCircle2 className="w-5 h-5" style={{ color: "rgb(34,197,94)" }} />
                     </motion.div>
+                    <span className="sys-label" style={{ color: "rgb(34,197,94)", letterSpacing: "0.25em" }}>
+                      ACCESS GRANTED
+                    </span>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
           </motion.div>
 
-          {/* Bottom text */}
-          <motion.div
+          {/* Footer note */}
+          <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-center mt-4 text-xs text-muted-foreground font-mono"
+            className="sys-label text-center mt-4"
           >
-            Powered by Voice Sentinel AI • Secure Audio Analysis System
-          </motion.div>
+            Powered by Voice Sentinel AI · Secure Audio Analysis System
+          </motion.p>
         </div>
       </motion.div>
     </AnimatePresence>

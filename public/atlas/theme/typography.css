@@ -1,0 +1,143 @@
+/*
+ * ============================================================
+ * ATLAS / TYPOGRAPHY SYSTEM
+ * ============================================================
+ * Usage: Import after colors.css. Applies global type defaults
+ * and exposes utility classes for the two-font system.
+ *
+ * Fonts in use:
+ *   Display  → Orbitron   (hero headings only)
+ *   Body     → Sarpanch   (all other text)
+ *
+ * Both are loaded via Google Fonts (see font-imports.css).
+ * ============================================================
+ */
+
+/* ── Global Body Type ─────────────────────────────────────── */
+body {
+  font-family: "Sarpanch", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-size:   16px;
+  line-height: 1.6;
+  font-weight: 400;
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Display / Hero Font ──────────────────────────────────── */
+/* Restrict .font-display to hero headings & logotype only.   */
+.font-display {
+  font-family: "Orbitron", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* ── Type Scale ───────────────────────────────────────────── */
+/*
+ * All sizes reference 4px baseline grid.
+ * Use these classes instead of arbitrary px values.
+ *
+ *  .text-2xs  → 10px  (labels, metadata, system tags)
+ *  .text-xs   → 12px  (captions, fine print)
+ *  .text-sm   → 14px  (body, descriptions)
+ *  .text-base → 16px  (default body)
+ *  .text-lg   → 18px  (card titles, subheadings)
+ *  .text-2xl  → 24px  (section titles, mobile h2)
+ *  .text-3xl  → 30px  (section headlines)
+ *  .text-4xl  → 36px  (large section headlines)
+ *  .text-5xl  → 48px  (hero subtext)
+ *  .text-6xl  → 60px  (hero headline desktop)
+ *  .text-7xl  → 72px  (hero headline large)
+ */
+.text-2xs { font-size: 10px; }
+
+/* ── Tracking / Spacing Scale ─────────────────────────────── */
+/*
+ * Used extensively for labels and nav items.
+ *  tracking-widest → 0.1em    (labels, tags, nav)
+ *  tracking-tight  → -0.025em (headlines)
+ */
+
+/* ── Label / Tag Style ───────────────────────────────────────
+ * Combine these for the characteristic system label look:
+ *
+ *   <span class="sys-label">SYS.01 / CAPABILITIES</span>
+ */
+.sys-label {
+  font-size:      10px;
+  font-weight:    500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color:          var(--muted);
+}
+.sys-label--accent {
+  color: var(--accent);
+}
+
+/* ── Navigation Text ──────────────────────────────────────── */
+.nav-text {
+  font-size:      12px;
+  letter-spacing: 0.1em;  /* tracking-widest */
+  text-transform: uppercase;
+  font-weight:    500;
+}
+
+/* ── Headline Utilities ───────────────────────────────────── */
+.headline-xl {
+  font-size:      clamp(2rem, 7vw, 4.5rem);
+  font-weight:    500;
+  letter-spacing: -0.025em;
+  line-height:    1.06;
+}
+.headline-lg {
+  font-size:      clamp(1.5rem, 4vw, 3rem);
+  font-weight:    500;
+  letter-spacing: -0.025em;
+  line-height:    1.1;
+}
+.headline-md {
+  font-size:      clamp(1.25rem, 3vw, 2rem);
+  font-weight:    500;
+  letter-spacing: -0.02em;
+  line-height:    1.2;
+}
+
+/* ── Body / Prose ─────────────────────────────────────────── */
+.body-copy {
+  font-size:   14px;
+  line-height: 1.75;
+  font-weight: 400;
+  color:       var(--muted);
+}
+.body-copy--sm {
+  font-size: 11px;
+  line-height: 1.8;
+}
+
+/* ── Mono / Code Style ────────────────────────────────────── */
+.font-mono-label {
+  font-family: ui-monospace, "Cascadia Code", "Fira Mono", monospace;
+  font-size:   10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Mask Reveal Utility ──────────────────────────────────── */
+/*
+ * Used for the GSAP line-by-line text reveal in the pinned hero.
+ * Wrap each line in .line-wrapper, put text in .line-content.
+ * GSAP animates .line-content { yPercent: 125 → 0 }.
+ */
+.line-wrapper {
+  display:   block;
+  overflow:  hidden;
+  clip-path: inset(0 0 0 0);
+  height:    1.32em;
+  line-height: 1.06;
+  padding:   0;
+  margin:    0;
+}
+.line-content {
+  display:      block;
+  will-change:  transform;
+}

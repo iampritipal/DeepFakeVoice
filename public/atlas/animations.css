@@ -1,0 +1,186 @@
+/*
+ * ============================================================
+ * ATLAS / ANIMATIONS
+ * ============================================================
+ * Usage: Import after colors.css and typography.css.
+ * Contains all CSS-only animations, keyframes, and transitions.
+ * GSAP-driven animations live in interactions.js.
+ * ============================================================
+ */
+
+/* ============================================================
+ * 1. KEYFRAMES
+ * ============================================================ */
+
+/* Pulse — used on status dot and accent indicators */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* Scan line sweep — one-shot horizontal scanline across viewport */
+@keyframes scanSweep {
+  0%   { top: -5%;  opacity: 0; }
+  5%   { opacity: 0.35; }
+  95%  { opacity: 0.35; }
+  100% { top: 110%; opacity: 0; }
+}
+
+/* Fade + rise — generic entrance for text/items */
+@keyframes fadeRise {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Reveal from bottom mask (paired with .line-wrapper) */
+@keyframes maskReveal {
+  from { transform: translateY(125%); }
+  to   { transform: translateY(0); }
+}
+
+/* Glow pulse on brand elements */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 8px var(--accent); }
+  50%       { box-shadow: 0 0 22px var(--accent), 0 0 40px color-mix(in srgb, var(--accent) 40%, transparent); }
+}
+
+/* Horizontal underline expand (nav links) */
+@keyframes underlineExpand {
+  from { transform: scaleX(0); transform-origin: right; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+
+/* ============================================================
+ * 2. UTILITY ANIMATION CLASSES
+ * ============================================================ */
+
+/* Status indicator — blinking dot */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* One-shot entrance for generic page elements */
+.animate-fade-rise {
+  animation: fadeRise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Staggered children — apply to parent, children get delay */
+.stagger-children > * {
+  animation: fadeRise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+.stagger-children > *:nth-child(2) { animation-delay: 80ms; }
+.stagger-children > *:nth-child(3) { animation-delay: 160ms; }
+.stagger-children > *:nth-child(4) { animation-delay: 240ms; }
+.stagger-children > *:nth-child(5) { animation-delay: 320ms; }
+
+/* ============================================================
+ * 3. TRANSITION TOKENS
+ * ============================================================
+ * Use these custom properties for consistent motion timing.
+ * Reference as: transition: color var(--t-fast) var(--ease-out);
+ */
+:root {
+  /* Duration */
+  --t-instant: 100ms;
+  --t-fast:    200ms;
+  --t-base:    300ms;
+  --t-slow:    500ms;
+  --t-theme:   800ms;   /* Theme color crossfade */
+  --t-reveal:  900ms;   /* Scroll reveal entrance */
+
+  /* Easing */
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);   /* Power3.out (GSAP equiv) */
+  --ease-in-out:    cubic-bezier(0.45, 0, 0.55, 1);  /* power2.inOut */
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1); /* Slight overshoot */
+  --ease-linear:    linear;
+}
+
+/* ============================================================
+ * 4. TRANSITION SHORTHANDS
+ * ============================================================ */
+
+/* Standard color/border hover transition (used on cards, nav) */
+.transition-colors {
+  transition:
+    color          var(--t-base) var(--ease-out),
+    background-color var(--t-base) var(--ease-out),
+    border-color   var(--t-slow) var(--ease-out);
+}
+
+/* Transform transitions (hover lift, scale) */
+.transition-transform {
+  transition: transform var(--t-base) var(--ease-out);
+}
+
+/* Combined — for cards that lift AND recolor */
+.transition-card {
+  transition:
+    transform      var(--t-slow) var(--ease-out),
+    border-color   var(--t-slow) var(--ease-out),
+    background-color var(--t-slow) var(--ease-out),
+    box-shadow     var(--t-slow) var(--ease-out);
+}
+
+/* Blur transitions (used on phase content crossfades in pinned stage) */
+.transition-blur {
+  transition: filter var(--t-base) var(--ease-in-out);
+}
+
+/* Nav underline expand — triggers on :hover via CSS */
+.nav-underline {
+  position:   relative;
+  padding-bottom: 4px;
+}
+.nav-underline::after {
+  content:      '';
+  position:     absolute;
+  bottom:       0;
+  left:         0;
+  width:        100%;
+  height:       1px;
+  background-color: var(--accent);
+  transform:    scaleX(0);
+  transform-origin: right;
+  transition:   transform var(--t-base) var(--ease-out);
+}
+.nav-underline:hover::after,
+.nav-underline.is-active::after {
+  transform:        scaleX(1);
+  transform-origin: left;
+}
+
+/* ============================================================
+ * 5. SCROLL PROGRESS BAR
+ * ============================================================
+ * Vertical 1px bar that fills via GSAP scaleY.
+ * See: interactions.js → initScrollTimeline() onUpdate.
+ */
+.scroll-progress-track {
+  width:    1px;
+  height:   48px;
+  background: var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.scroll-progress-fill {
+  position:         absolute;
+  top:              0;
+  left:             0;
+  width:            100%;
+  height:           100%;
+  background:       var(--accent);
+  transform:        scaleY(0);
+  transform-origin: top;
+  will-change:      transform;
+  /* GSAP sets scaleY directly — no CSS transition needed here */
+}
+
+/* ============================================================
+ * 6. WILL-CHANGE HINT
+ * ============================================================
+ * Apply to elements that GSAP will animate heavily.
+ */
+.will-change-transform {
+  will-change: transform, opacity, filter;
+}

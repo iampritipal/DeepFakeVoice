@@ -1,0 +1,62 @@
+/*
+ * ============================================================
+ * ATLAS / FONT IMPORTS
+ * ============================================================
+ * Usage: Place these <link> tags in <head> BEFORE any CSS.
+ * Or @import this file as the very first line of your CSS bundle.
+ *
+ * Font Strategy:
+ *   Orbitron  → Geometric display; tech/sci-fi aesthetic.
+ *               Weights: 400, 500, 600.
+ *               Use ONLY for hero headlines and logotype.
+ *
+ *   Sarpanch  → Indian-origin geometric sans; distinctive body.
+ *               Weights: 400, 500, 600.
+ *               Use everywhere else.
+ *
+ * Both fonts are variable-weight subsets served by Google Fonts.
+ * ============================================================
+ */
+
+/*
+ * ── HTML <head> snippet ──────────────────────────────────────
+ * Paste inside your <head> before other stylesheets:
+ *
+ * <link rel="preconnect" href="https://fonts.googleapis.com">
+ * <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ * <link
+ *   href="https://fonts.googleapis.com/css2?
+ *     family=Orbitron:wght@400;500;600
+ *     &family=Sarpanch:wght@400;500;600
+ *     &display=swap"
+ *   rel="stylesheet"
+ * >
+ * ────────────────────────────────────────────────────────────
+ */
+
+/* ── @import version (for CSS-only setups) ─────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600&family=Sarpanch:wght@400;500;600&display=swap');
+
+/*
+ * ── Font-display strategy ────────────────────────────────────
+ * `display=swap` in the URL ensures text renders in fallback
+ * immediately, swapping to the web font once loaded.
+ * This prevents invisible text (FOIT) on slow connections.
+ */
+
+/*
+ * ── Local fallback stack ─────────────────────────────────────
+ * If Google Fonts is unavailable, the browser falls through:
+ *
+ *   Orbitron  → no good system fallback; use a generic geometric:
+ *               "Trebuchet MS", ui-rounded, sans-serif
+ *
+ *   Sarpanch  → "Gill Sans", "Optima", ui-sans-serif, system-ui, sans-serif
+ *
+ * Declare in CSS custom properties for easy override:
+ */
+:root {
+  --font-display: "Orbitron", "Trebuchet MS", ui-rounded, sans-serif;
+  --font-body:    "Sarpanch", "Gill Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    ui-monospace, "Cascadia Code", "Fira Mono", monospace;
+}

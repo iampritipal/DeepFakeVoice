@@ -1,0 +1,235 @@
+/*
+ * ============================================================
+ * ATLAS / BACKGROUND EFFECTS
+ * ============================================================
+ * Usage: Import after colors.css.
+ * Controls all visual background layers:
+ *   1. WebGL Three.js particle canvas (positioned by JS)
+ *   2. SVG noise texture overlay
+ *   3. Glassmorphism section slabs
+ *   4. Phase 2 grid + scanline overlay
+ *   5. Utility gradients and depth effects
+ * ============================================================
+ */
+
+/* ============================================================
+ * 1. WEBGL CANVAS CONTAINER
+ * ============================================================
+ * Three.js renderer is appended into #webgl-container.
+ * Fixed behind all DOM content, pointer-events disabled.
+ */
+#webgl-container {
+  position:       fixed;
+  inset:          0;
+  z-index:        0;
+  pointer-events: none;
+  width:          100%;
+  height:         100%;
+}
+#webgl-container canvas {
+  display: block;
+  width:   100% !important;
+  height:  100% !important;
+}
+
+/* ============================================================
+ * 2. NOISE TEXTURE OVERLAY
+ * ============================================================
+ * Sits above the WebGL canvas, below DOM content.
+ * Adds film-grain texture using an inline SVG data URI.
+ * Opacity kept at 0.015 so it's subliminal, not visible.
+ */
+.bg-noise {
+  position: absolute;
+  inset:    0;
+  z-index:  10;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity:  0.015;
+}
+
+/* ============================================================
+ * 3. GLASSMORPHISM SECTION SLAB
+ * ============================================================
+ * Each content section sits inside .section-slab.
+ * The slab has a frosted-glass backdrop applied via ::before,
+ * and a blue-tinted radial glow via ::after.
+ *
+ * Structure:
+ *   <section>
+ *     <div class="section-slab">
+ *       <div class="section-inner">  ← your content  </div>
+ *     </div>
+ *   </section>
+ */
+.section-slab {
+  max-width: 1320px;
+  margin:    0 auto;
+  position:  relative;
+}
+
+/* Frosted glass backing */
+.section-slab::before {
+  content:  "";
+  position: absolute;
+  inset:    -18px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.00) 46%
+    ),
+    rgba(8, 10, 14, 0.16);
+  border:           1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter:  blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    0 18px 70px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-radius:    10px;
+  pointer-events:   none;
+  z-index:          0;
+  transition:       background var(--t-theme, 0.8s) ease;
+}
+
+/* Accent radial glow (electric blue top-edge bloom) */
+.section-slab::after {
+  content:  "";
+  position: absolute;
+  inset:    -18px;
+  background:
+    radial-gradient(
+      900px 320px at 50% 0%,
+      rgba(59, 130, 246, 0.08) 0%,
+      rgba(0, 0, 0, 0.00) 62%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.00) 0%,
+      rgba(0, 0, 0, 0.12) 100%
+    );
+  opacity:        0.16;
+  border-radius:  10px;
+  pointer-events: none;
+  z-index:        0;
+}
+
+/* Remove slab inset on small screens (full-bleed) */
+@media (max-width: 768px) {
+  .section-slab::before,
+  .section-slab::after {
+    inset: 0;
+  }
+}
+
+/* Content inside the slab — always above the pseudo-elements */
+.section-inner {
+  position: relative;
+  z-index:  1;
+  padding:  88px 28px;
+}
+@media (min-width: 768px) {
+  .section-inner {
+    padding: 120px 52px;
+  }
+}
+
+/* ============================================================
+ * 4. PHASE 2 GRID OVERLAY
+ * ============================================================
+ * Visible only during the pinned scroll phase 2 transition.
+ * Dual repeating-linear-gradient makes a 12-col + row grid.
+ * Controlled by GSAP opacity in interactions.js.
+ */
+.phase-grid {
+  position:      absolute;
+  inset:         0;
+  pointer-events: none;
+  opacity:       0.035;
+  mix-blend-mode: screen;
+  background:
+    repeating-linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.18) 0px,
+      rgba(255, 255, 255, 0.18) 1px,
+      rgba(255, 255, 255, 0.00) 1px,
+      rgba(255, 255, 255, 0.00) calc(100% / 12)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.10) 0px,
+      rgba(255, 255, 255, 0.10) 1px,
+      rgba(255, 255, 255, 0.00) 1px,
+      rgba(255, 255, 255, 0.00) 56px
+    );
+}
+
+/* ============================================================
+ * 5. SCANLINE ELEMENT
+ * ============================================================
+ * A 1px horizontal bar GSAP moves top: -10% → top: 110%.
+ * Fades in/out at start and end of sweep.
+ * Position it absolutely inside a relative overflow:hidden container.
+ */
+.phase-scanline {
+  position:   absolute;
+  left:       0;
+  right:      0;
+  height:     1px;
+  top:        -10%;
+  background: rgba(59, 130, 246, 0.55);
+  opacity:    0;
+  filter:     blur(0.2px);
+  pointer-events: none;
+  /* GSAP controls: opacity, top — no CSS animation here */
+}
+
+/* ============================================================
+ * 6. UTILITY GRADIENT HELPERS
+ * ============================================================ */
+
+/* Top-edge accent bloom (reuse in section headers) */
+.bg-accent-bloom {
+  background: radial-gradient(
+    ellipse 80% 200px at 50% 0%,
+    color-mix(in srgb, var(--accent) 12%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+/* Dark vignette overlay for depth */
+.bg-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+/* Full-screen fixed dark base (behind WebGL) */
+.bg-base {
+  position:         fixed;
+  inset:            0;
+  background-color: var(--bg);
+  z-index:          -1;
+}
+
+/* ============================================================
+ * 7. HIDE SCROLLBAR (LENIS SMOOTH SCROLL)
+ * ============================================================
+ * Lenis replaces native scroll; hide the native scrollbar.
+ */
+::-webkit-scrollbar { display: none; }
+* {
+  -ms-overflow-style: none;
+  scrollbar-width:    none;
+}
+
+/* Prevent horizontal scroll */
+body,
+#app-wrapper {
+  overflow-x: hidden;
+}
+html {
+  overscroll-behavior: none;
+}

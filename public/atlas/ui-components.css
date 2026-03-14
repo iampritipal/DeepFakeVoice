@@ -1,0 +1,396 @@
+/*
+ * ============================================================
+ * ATLAS / UI COMPONENT EFFECTS
+ * ============================================================
+ * Usage: Import last in your CSS stack.
+ * Contains reusable component patterns:
+ *   1. Feature cards (glass + hover lift + accent underline)
+ *   2. Module/architecture cards
+ *   3. Buttons (primary accent, outline, ghost)
+ *   4. Nav link active + underline
+ *   5. Pricing card (featured highlight variant)
+ *   6. Status badge / system tag
+ * ============================================================
+ */
+
+/* ============================================================
+ * 1. FEATURE CARD
+ * ============================================================
+ * The 3-column capability cards in the pinned hero phase 3.
+ * Key effects:
+ *   - Glassmorphism background
+ *   - Hover: lift (-translate-y-1) + border brightens
+ *   - Bottom accent bar slides in from left on hover
+ */
+.feature-card {
+  background:       rgba(15, 15, 15, 0.4);
+  backdrop-filter:  blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border:           1px solid var(--border);
+  display:          flex;
+  flex-direction:   column;
+  position:         relative;
+  overflow:         hidden;
+  transition:
+    transform      500ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color   500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.feature-card:hover {
+  transform:    translateY(-4px);
+  border-color: var(--muted);
+}
+
+/* Accent underline that slides in from left */
+.feature-card::after {
+  content:          '';
+  position:         absolute;
+  bottom:           0;
+  left:             0;
+  width:            100%;
+  height:           1px;
+  background:       var(--accent);
+  transform:        scaleX(0);
+  transform-origin: left;
+  transition:       transform 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.feature-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* Card preview area (the mini mockup at card top) */
+.card-preview {
+  border-bottom: 1px solid var(--border);
+  background:    var(--panel);
+  transition:    background 500ms ease;
+}
+.feature-card:hover .card-preview {
+  background: rgba(25, 25, 25, 0.5);
+}
+
+/* Card chrome bar (the 3-dot window decoration) */
+.card-chrome {
+  height:        20px;
+  border-bottom: 1px solid var(--border);
+  display:       flex;
+  align-items:   center;
+  padding:       0 8px;
+  gap:           6px;
+  background:    rgba(0, 0, 0, 0.4);
+}
+.card-chrome-dot {
+  width:      4px;
+  height:     4px;
+  background: var(--border);
+}
+
+/* ============================================================
+ * 2. MODULE CARD (Architecture grid)
+ * ============================================================
+ * Simpler than feature card — no pseudo ::after bar.
+ * Hover: border turns accent color.
+ */
+.module-card {
+  border:           1px solid var(--border);
+  background:       var(--panel);
+  backdrop-filter:  blur(12px);
+  padding:          24px;
+  display:          flex;
+  flex-direction:   column;
+  transition:       border-color 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.module-card:hover {
+  border-color: var(--accent);
+}
+.module-card:hover .card-title {
+  color: white;
+}
+.card-title {
+  transition: color 300ms ease;
+}
+
+/* Module card status row */
+.module-status {
+  margin-top:     auto;
+  padding-top:    16px;
+  border-top:     1px solid var(--border);
+  display:        flex;
+  justify-content: space-between;
+  align-items:    center;
+  font-size:      10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--muted);
+}
+.module-status-value {
+  color: var(--accent);
+}
+
+/* ============================================================
+ * 3. BUTTONS
+ * ============================================================ */
+
+/* --- Primary: Accent fill → white on hover --- */
+.btn-primary {
+  display:        inline-flex;
+  align-items:    center;
+  justify-content: center;
+  padding:        16px 32px;
+  font-size:      12px;
+  font-weight:    500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background:     var(--accent);
+  color:          #000;
+  border:         none;
+  cursor:         pointer;
+  transition:
+    background-color var(--t-base) ease,
+    color            var(--t-base) ease;
+  outline:        none;
+  border-radius:  0; /* Intentionally sharp — no radius */
+}
+.btn-primary:hover {
+  background-color: #ffffff;
+  color:            #000;
+}
+
+/* --- Outline: Border → fills white on hover --- */
+.btn-outline {
+  display:        inline-flex;
+  align-items:    center;
+  justify-content: center;
+  padding:        16px 32px;
+  font-size:      12px;
+  font-weight:    500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background:     transparent;
+  color:          var(--fg);
+  border:         1px solid var(--border);
+  cursor:         pointer;
+  transition:
+    background-color var(--t-base) ease,
+    color            var(--t-base) ease;
+  outline:        none;
+  border-radius:  0;
+}
+.btn-outline:hover {
+  background-color: var(--fg);
+  color:            #000;
+}
+
+/* --- Ghost CTA with trailing arrow --- */
+.btn-ghost {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            12px;
+  font-size:      12px;
+  font-weight:    500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background:     #fff;
+  color:          #000;
+  padding:        16px 32px;
+  border:         none;
+  cursor:         pointer;
+  transition:
+    background-color var(--t-base) ease,
+    color            var(--t-base) ease;
+  border-radius:  0;
+}
+.btn-ghost:hover {
+  background-color: var(--accent);
+  color:            #fff;
+}
+/* Trailing arrow slides right on hover */
+.btn-ghost .btn-arrow {
+  transition: transform var(--t-base) var(--ease-out);
+}
+.btn-ghost:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* --- Nav button (small, border) --- */
+.btn-nav {
+  padding:        10px 24px;
+  font-size:      12px;
+  font-weight:    500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border:         1px solid var(--border);
+  background:     transparent;
+  color:          var(--fg);
+  cursor:         pointer;
+  transition:
+    background-color var(--t-base) ease,
+    color            var(--t-base) ease;
+  border-radius:  0;
+}
+.btn-nav:hover {
+  background-color: var(--fg);
+  color:            var(--bg);
+}
+
+/* ============================================================
+ * 4. NAV LINKS
+ * ============================================================ */
+.nav-link {
+  font-size:      12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight:    500;
+  color:          var(--muted);
+  position:       relative;
+  padding-bottom: 4px;
+  transition:     color var(--t-base) ease;
+}
+.nav-link:hover,
+.nav-link.is-active {
+  color: var(--accent);
+}
+/* Underline expand effect */
+.nav-link::after {
+  content:          '';
+  position:         absolute;
+  bottom:           0;
+  left:             0;
+  width:            100%;
+  height:           1px;
+  background-color: var(--accent);
+  transform:        scaleX(0);
+  transform-origin: right;
+  transition:       transform var(--t-base) ease;
+}
+.nav-link:hover::after,
+.nav-link.is-active::after {
+  transform:        scaleX(1);
+  transform-origin: left;
+}
+
+/* ============================================================
+ * 5. PRICING CARD — FEATURED HIGHLIGHT
+ * ============================================================
+ * The "Architect" middle card with electric left border glow.
+ */
+.pricing-card-featured {
+  border:     1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  background: color-mix(in srgb, var(--accent) 5%, var(--bg));
+  position:   relative;
+  overflow:   hidden;
+  transform:  scale(1.02);
+  box-shadow:
+    0 0 40px color-mix(in srgb, var(--accent) 10%, transparent);
+  transition: box-shadow 700ms ease;
+}
+.pricing-card-featured:hover {
+  box-shadow:
+    0 0 60px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+/* Left glow stripe */
+.pricing-card-featured::before {
+  content:    '';
+  position:   absolute;
+  left:       0;
+  top:        0;
+  bottom:     0;
+  width:      2px;
+  background: var(--accent);
+  box-shadow: 0 0 15px var(--accent);
+}
+
+/* "Invite Only" badge (top-right corner) */
+.pricing-badge {
+  position:       absolute;
+  top:            0;
+  right:          0;
+  background:     var(--accent);
+  color:          #000;
+  font-size:      10px;
+  padding:        6px 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight:    500;
+}
+
+/* ============================================================
+ * 6. STATUS BADGE / SYSTEM TAG
+ * ============================================================ */
+.sys-tag {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            10px;
+  font-size:      10px;
+  font-weight:    500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color:          var(--muted);
+}
+.sys-tag--accent {
+  color: var(--accent);
+}
+
+/* Online status dot */
+.status-dot {
+  width:      4px;
+  height:     4px;
+  background: var(--accent);
+  display:    inline-block;
+  animation:  pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ============================================================
+ * 7. PIPELINE BREADCRUMB ROW
+ * ============================================================
+ * "Prompt → Constraints → Components → Code" display.
+ */
+.pipeline-row {
+  display:        flex;
+  align-items:    center;
+  gap:            8px;
+  font-size:      10px;
+  font-family:    ui-monospace, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--muted);
+  background:     var(--bg);
+  padding:        12px;
+  border:         1px solid var(--border);
+  width:          max-content;
+}
+.pipeline-row .step-accent { color: var(--accent); }
+.pipeline-row .step-final  { color: var(--fg); }
+
+/* ============================================================
+ * 8. SECTION DIVIDER / CREDENTIAL STRIP
+ * ============================================================ */
+.section-divider {
+  border-bottom:  1px solid var(--border);
+  padding-bottom: 16px;
+  margin-bottom:  24px;
+  display:        flex;
+  justify-content: space-between;
+  align-items:    center;
+  font-size:      10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color:          var(--muted);
+  font-weight:    500;
+}
+
+/* ============================================================
+ * 9. FOOTER STRIP
+ * ============================================================ */
+.site-footer {
+  border-top:   1px solid var(--border);
+  padding-top:  32px;
+  display:      flex;
+  justify-content: space-between;
+  align-items:  center;
+  font-size:    10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color:        var(--muted);
+  font-weight:  500;
+  gap:          16px;
+}
