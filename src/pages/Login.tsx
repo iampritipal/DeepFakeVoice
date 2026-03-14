@@ -9,7 +9,25 @@ export default function Login() {
   const [remember, setRemember] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background cyber-grid flex items-center justify-center px-4">
+    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden" style={{ background: "#030303" }}>
+
+      {/* Animated background blobs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <motion.div className="absolute -top-40 -left-40 w-96 h-96 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.10) 0%, transparent 70%)" }}
+          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.9, 0.5] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.div className="absolute -bottom-40 -right-40 w-96 h-96 rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)" }}
+          animate={{ scale: [1.1, 1, 1.1], opacity: [0.4, 0.7, 0.4] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full"
+          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 60%)" }}
+          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} />
+        {/* Subtle grid */}
+        <div className="absolute inset-0 cyber-grid opacity-40" />
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 24 }}

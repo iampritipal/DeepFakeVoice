@@ -62,7 +62,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-background cyber-grid">
+    <div className="min-h-screen" style={{ background: "#0a0a0a" }}>
       <Navbar />
 
       <div className="flex">
