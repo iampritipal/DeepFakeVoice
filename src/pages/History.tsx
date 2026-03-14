@@ -97,7 +97,7 @@ export default function History() {
   };
 
   return (
-    <div className="min-h-screen bg-background cyber-grid">
+    <div className="min-h-screen" style={{ background: "#0a0a0a" }}>
       {/* Header */}
       <div className="border-b border-border bg-card/80 backdrop-blur-xl px-6 py-4 sticky top-0 z-50">
         <div className="flex items-center justify-between">

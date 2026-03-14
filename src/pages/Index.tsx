@@ -128,7 +128,7 @@ ${result.label === "Real Voice" ? "The audio sample exhibits natural speech char
   }, [result]);
 
   return (
-    <div className="min-h-screen bg-background cyber-grid">
+    <div className="min-h-screen" style={{ background: "#0a0a0a" }}>
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 py-6">
