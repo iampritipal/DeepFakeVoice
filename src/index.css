@@ -1,9 +1,8 @@
+@import './design-system.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* VoiceGuard AI design system */
-@import './design-system.css';
 
 @layer base {
   :root {
