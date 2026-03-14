@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Navbar } from "@/components/dashboard/Navbar";
 import {
   Activity,
@@ -7,20 +7,16 @@ import {
   BarChart3,
   Shield,
   Users,
-  Globe,
   Radar,
   PieChart,
-  Settings,
 } from "lucide-react";
 import { RealTimeAnalysis } from "@/components/dashboard/tabs/RealTimeAnalysis";
 import { FileAnalysis } from "@/components/dashboard/tabs/FileAnalysis";
 import { VoiceAnalytics } from "@/components/dashboard/tabs/VoiceAnalytics";
 import { SecurityLogs } from "@/components/dashboard/tabs/SecurityLogs";
 import { VoiceCompare } from "@/components/dashboard/tabs/VoiceCompare";
-import { ThreatMap } from "@/components/dashboard/tabs/ThreatMap";
 import { ThreatRadar } from "@/components/dashboard/tabs/ThreatRadar";
 import { StatisticsDashboard } from "@/components/dashboard/tabs/StatisticsDashboard";
-import { SystemAnalysis } from "@/components/dashboard/tabs/SystemAnalysis";
 
 type TabType =
   | "realtime"
@@ -28,10 +24,8 @@ type TabType =
   | "analytics"
   | "logs"
   | "compare"
-  | "map"
   | "radar"
-  | "statistics"
-  | "system";
+  | "statistics";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<TabType>("realtime");
@@ -42,10 +36,8 @@ export default function Dashboard() {
     { id: "analytics" as TabType, label: "Voice Analytics", icon: BarChart3 },
     { id: "logs" as TabType, label: "Security Logs", icon: Shield },
     { id: "compare" as TabType, label: "Voice Compare", icon: Users },
-    { id: "map" as TabType, label: "Threat Map", icon: Globe },
     { id: "radar" as TabType, label: "Threat Radar", icon: Radar },
     { id: "statistics" as TabType, label: "Statistics", icon: PieChart },
-    { id: "system" as TabType, label: "System Analysis", icon: Settings },
   ];
 
   const renderTabContent = () => {
@@ -60,14 +52,10 @@ export default function Dashboard() {
         return <SecurityLogs />;
       case "compare":
         return <VoiceCompare />;
-      case "map":
-        return <ThreatMap />;
       case "radar":
         return <ThreatRadar />;
       case "statistics":
         return <StatisticsDashboard />;
-      case "system":
-        return <SystemAnalysis />;
       default:
         return <RealTimeAnalysis />;
     }
@@ -106,14 +94,18 @@ export default function Dashboard() {
                   >
                     <Icon className="w-4 h-4 shrink-0" />
                     <span className="truncate">{tab.label}</span>
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="ml-auto w-1.5 h-1.5 rounded-full bg-primary"
-                        animate={{ scale: [1, 1.5, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                    )}
+                    <AnimatePresence>
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeTab"
+                          className="ml-auto w-2.5 h-2.5 rounded-full bg-primary"
+                          initial={{ opacity: 0, scale: 0.5 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.5 }}
+                          transition={{ duration: 0.5, ease: "easeInOut" }}
+                        />
+                      )}
+                    </AnimatePresence>
                   </motion.button>
                 );
               })}
